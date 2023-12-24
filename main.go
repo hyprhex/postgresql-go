@@ -9,13 +9,13 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type User struct {
-	ID        int
-	Age       int
-	FirstName string
-	LastName  string
-	Email     string
-}
+// type User struct {
+// 	ID        int
+// 	Age       int
+// 	FirstName string
+// 	LastName  string
+// 	Email     string
+// }
 
 func init() {
 	err := godotenv.Load()
@@ -112,18 +112,41 @@ func main() {
 	// }
 
 	// Return entire record
-	sqlStatement := `SELECT * FROM users WHERE id = $1;`
-	var users User
-	row := db.QueryRow(sqlStatement, 1)
-	errs := row.Scan(&users.ID, &users.Age, &users.FirstName, &users.LastName, &users.Email)
-	switch errs {
-	case sql.ErrNoRows:
-		fmt.Println("No rows were returned")
-		return
-	case nil:
-		fmt.Println(users)
-	default:
-		panic(errs)
+	// sqlStatement := `SELECT * FROM users WHERE id = $1;`
+	// var users User
+	// row := db.QueryRow(sqlStatement, 1)
+	// errs := row.Scan(&users.ID, &users.Age, &users.FirstName, &users.LastName, &users.Email)
+	// switch errs {
+	// case sql.ErrNoRows:
+	// 	fmt.Println("No rows were returned")
+	// 	return
+	// case nil:
+	// 	fmt.Println(users)
+	// default:
+	// 	panic(errs)
+	// }
+
+	// Querying many records
+	rows, err := db.Query("SELECT id, first_name FROM users LIMIT $1", 3)
+	if err != nil {
+		panic(err)
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var id int
+		var firstName string
+		err = rows.Scan(&id, &firstName)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(id, firstName)
+	}
+
+	err = rows.Err()
+	if err != nil {
+		panic(err)
 	}
 
 }
