@@ -58,16 +58,32 @@ func main() {
 	//
 
 	// Update record 
+	// sqlStatement := `
+	// UPDATE users SET first_name = $2, last_name = $3
+	// WHERE id = $1`
+	// res, err := db.Exec(sqlStatement, 3, "NewFirst", "NewLast")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	//
+	// count, err := res.RowsAffected()
+	// if err != nil {
+	// 	panic(err)
+	// }
+	//
+	// fmt.Println(count)
+
+	// Delete 
 	sqlStatement := `
-	UPDATE users SET first_name = $2, last_name = $3
-	WHERE id = $1`
-	res, err := db.Exec(sqlStatement, 3, "NewFirst", "NewLast")
+	DELETE FROM users 
+	WHERE id = $1;`
+	res, err := db.Exec(sqlStatement, 8)
 	if err != nil {
 		panic(err)
 	}
 
 	count, err := res.RowsAffected()
-	if err != nil {
+	if err != nil  {
 		panic(err)
 	}
 
