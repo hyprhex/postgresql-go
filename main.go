@@ -42,4 +42,16 @@ func main() {
 
 	fmt.Println("Successfully connected")
 
+	sqlStatement := `
+	INSERT INTO users (age, email, first_name, last_name)
+	VALUES ($1, $2, $3, $4)
+	RETURNING id`
+	id := 0
+	err = db.QueryRow(sqlStatement, 29, "father@gmai.com", "Father", "Seyf").Scan(&id)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("New record ID is:", id)
+
 }
