@@ -42,7 +42,7 @@ func main() {
 
 	fmt.Println("Successfully connected")
 
-	// Insert record 
+	// Insert record
 
 	// sqlStatement := `
 	// INSERT INTO users (age, email, first_name, last_name)
@@ -57,7 +57,7 @@ func main() {
 	// fmt.Println("New record ID is:", id)
 	//
 
-	// Update record 
+	// Update record
 	// sqlStatement := `
 	// UPDATE users SET first_name = $2, last_name = $3
 	// WHERE id = $1`
@@ -73,20 +73,36 @@ func main() {
 	//
 	// fmt.Println(count)
 
-	// Delete 
-	sqlStatement := `
-	DELETE FROM users 
-	WHERE id = $1;`
-	res, err := db.Exec(sqlStatement, 8)
-	if err != nil {
-		panic(err)
+	// Delete
+	// sqlStatement := `
+	// DELETE FROM users
+	// WHERE id = $1;`
+	// res, err := db.Exec(sqlStatement, 8)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	//
+	// count, err := res.RowsAffected()
+	// if err != nil  {
+	// 	panic(err)
+	// }
+	//
+	// fmt.Println(count)
+
+	// Querying for a single record
+	sqlStatement := `SELECT id, email FROM users WHERE id = $1;`
+	var email string
+	var id int
+	row := db.QueryRow(sqlStatement, 3)
+	switch err := row.Scan(&id, &email); err {
+		case sql.ErrNoRows:
+			fmt.Println("No rows were returend") // Here in real project we return 404 or redirect
+		case nil:
+			fmt.Println(id, email)
+		default:
+			panic(err) // In real project we can return 500
 	}
 
-	count, err := res.RowsAffected()
-	if err != nil  {
-		panic(err)
-	}
-
-	fmt.Println(count)
+	
 
 }
