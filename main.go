@@ -9,6 +9,14 @@ import (
 	_ "github.com/lib/pq"
 )
 
+type User struct {
+	ID        int
+	Age       int
+	FirstName string
+	LastName  string
+	Email     string
+}
+
 func init() {
 	err := godotenv.Load()
 	if err != nil {
@@ -90,19 +98,32 @@ func main() {
 	// fmt.Println(count)
 
 	// Querying for a single record
-	sqlStatement := `SELECT id, email FROM users WHERE id = $1;`
-	var email string
-	var id int
-	row := db.QueryRow(sqlStatement, 3)
-	switch err := row.Scan(&id, &email); err {
-		case sql.ErrNoRows:
-			fmt.Println("No rows were returend") // Here in real project we return 404 or redirect
-		case nil:
-			fmt.Println(id, email)
-		default:
-			panic(err) // In real project we can return 500
-	}
+	// sqlStatement := `SELECT id, email FROM users WHERE id = $1;`
+	// var email string
+	// var id int
+	// row := db.QueryRow(sqlStatement, 3)
+	// switch err := row.Scan(&id, &email); err {
+	// case sql.ErrNoRows:
+	// 	fmt.Println("No rows were returend") // Here in real project we return 404 or redirect
+	// case nil:
+	// 	fmt.Println(id, email)
+	// default:
+	// 	panic(err) // In real project we can return 500
+	// }
 
-	
+	// Return entire record
+	sqlStatement := `SELECT * FROM users WHERE id = $1;`
+	var users User
+	row := db.QueryRow(sqlStatement, 1)
+	errs := row.Scan(&users.ID, &users.Age, &users.FirstName, &users.LastName, &users.Email)
+	switch errs {
+	case sql.ErrNoRows:
+		fmt.Println("No rows were returned")
+		return
+	case nil:
+		fmt.Println(users)
+	default:
+		panic(errs)
+	}
 
 }
